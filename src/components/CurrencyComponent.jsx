@@ -5,37 +5,47 @@ import axios from "axios";
 
 export default function CurrencyComponent() {
   // STATE LOGIC
-  const [info, setInfo] = useState([]);
   const [input, setInput] = useState(0);
+  const [info, setInfo] = useState([]);
   const [from, setFrom] = useState("usd");
   const [to, setTo] = useState("bdt");
   const [options, setOptions] = useState([]);
   const [output, setOutput] = useState(0);
 
- 
-
-
   //Async API Call
   useEffect(() => {
-    axios.get(
-      `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${from}.json`
-    ).then((res) => {
-      console.log(res);
-      
-      setInfo(res.data[from]);
-    });
+    axios
+      .get(
+        `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${from}.json`
+      )
+      .then((res) => {
+        //console.log(res.data[from]);
+
+        setInfo(res.data[from]);
+      });
   }, [from]);
 
-  //Handlers, Functions
   function convert() {
     let rate = info[to];
     setOutput(input * rate);
   }
 
+  useEffect(() => {
+    const options = Object.keys(info);
+    const formattedOptions = options.map((opt) => ({
+      value: opt,
+      label: opt.toUpperCase(),
+    }));
+    setOptions(formattedOptions);
+    convert();
+  }, [info]);
+
+  //Handlers, Functions
+
   function flip() {
     let temp = from;
     setFrom(to);
-    setTo(to);
+    setTo(temp);
   }
 
   return (
@@ -89,7 +99,15 @@ export default function CurrencyComponent() {
             Convert
           </button>
           <h2>Converted Amount</h2>
-          <p>{input + " " + from + " = " + output.toFixed(2) + " " + to}</p>
+          <p>
+            {input +
+              " " +
+              from.toUpperCase() +
+              " = " +
+              output.toFixed(2) +
+              " " +
+              to.toUpperCase()}
+          </p>
         </div>
       </div>
     </>
