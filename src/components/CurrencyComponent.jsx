@@ -1,7 +1,38 @@
 import Select from "react-select";
 import { HiSwitchHorizontal } from "react-icons/hi";
+import { useEffect, useState } from "react";
+import { Axios } from "axios";
 
 export default function CurrencyComponent() {
+  // STATE LOGIC
+  const [info, setInfo] = useState([]);
+  const [input, setInput] = useState(0);
+  const [from, setFrom] = useState("usd");
+  const [to, setTo] = useState("bdt");
+  const [options, setOptions] = useState([]);
+  const [output, setOutput] = useState(0);
+
+  //Async API Call
+  useEffect(() => {
+    Axios.get(
+      `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${from}.json`
+    ).then((res) => {
+      setInfo(res.data[from]);
+    });
+  }, [from]);
+
+  //Handlers, Functions
+  function convert() {
+    let rate = info[to];
+    setOutput(input*rate);
+  }
+
+  function flip() {
+    let temp = from;
+    setFrom(to);
+    setTo(to);
+  }
+
   return (
     <>
       <div className="App">
