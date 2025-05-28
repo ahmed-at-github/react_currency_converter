@@ -1,7 +1,7 @@
 import Select from "react-select";
 import { HiSwitchHorizontal } from "react-icons/hi";
 import { useEffect, useState } from "react";
-import { Axios } from "axios";
+import axios from "axios";
 
 export default function CurrencyComponent() {
   // STATE LOGIC
@@ -12,11 +12,16 @@ export default function CurrencyComponent() {
   const [options, setOptions] = useState([]);
   const [output, setOutput] = useState(0);
 
+ 
+
+
   //Async API Call
   useEffect(() => {
-    Axios.get(
-      `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${from}.json`
+    axios.get(
+      `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${from}.json`
     ).then((res) => {
+      console.log(res);
+      
       setInfo(res.data[from]);
     });
   }, [from]);
@@ -24,7 +29,7 @@ export default function CurrencyComponent() {
   //Handlers, Functions
   function convert() {
     let rate = info[to];
-    setOutput(input*rate);
+    setOutput(input * rate);
   }
 
   function flip() {
@@ -42,46 +47,49 @@ export default function CurrencyComponent() {
         <div className="container">
           <div className="left">
             <h3>Amount</h3>
-            <input type="text" placeholder="Enter the amount" onChange={0} />
+            <input
+              type="text"
+              placeholder="Enter the amount"
+              onChange={(e) => setInput(e.target.value)}
+            />
           </div>
           <div className="middle">
             <h3>From</h3>
             <Select
-              options={0}
-              onChange={
-                0
-                /*(selectedOption) => setFrom(selectedOption?.value)*/
-              }
-              value={
-                0
-                /* options.find((option) => option.value === from)*/
-              }
+              options={options}
+              onChange={(e) => setFrom(e?.value)}
+              value={options.find((option) => option.value === from)}
               placeholder="From"
             />
           </div>
           <div className="switch">
-            <HiSwitchHorizontal size="30px" onClick={0} />
+            <HiSwitchHorizontal
+              size="30px"
+              onClick={() => {
+                flip();
+              }}
+            />
           </div>
           <div className="right">
             <h3>To</h3>
             <Select
-              options={0}
-              onChange={
-                0
-                /*(selectedOption) => setTo(selectedOption?.value)*/
-              }
-              value={
-                0
-                /*options.find((option) => option.value === to)*/
-              }
+              options={options}
+              onChange={(e) => setTo(e?.value)}
+              value={options.find((option) => option.value === to)}
               placeholder="To"
             />
           </div>
         </div>
         <div className="result">
-          <button onClick={0}>Convert</button>
+          <button
+            onClick={() => {
+              convert();
+            }}
+          >
+            Convert
+          </button>
           <h2>Converted Amount</h2>
-          <p>0</p>
+          <p>{input + " " + from + " = " + output.toFixed(2) + " " + to}</p>
         </div>
       </div>
     </>
